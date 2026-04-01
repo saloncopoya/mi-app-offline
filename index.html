@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Mi Blog Offline</title>
+    <title>Legado Avicola - Social</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#8B4513">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -19,7 +19,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background: #f0f0f0;
+            background: #8B4513;
         }
         
         iframe {
@@ -33,7 +33,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
@@ -51,114 +51,73 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-family: sans-serif;
-            color: #666;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 12px 24px;
+            border-radius: 30px;
+            z-index: 9999;
         }
     </style>
 </head>
 <body>
-    <!-- IFRAME: Contenedor de tu blog con sandbox para evitar redirecciones -->
-    <iframe 
-        id="blogFrame" 
-        src="about:blank"
-        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads"
-        referrerpolicy="no-referrer">
-    </iframe>
+    <iframe id="blogFrame" src="about:blank"></iframe>
     <div class="offline-badge" id="offlineBadge">📴 Modo Offline</div>
     <div class="loading" id="loading">Cargando...</div>
 
     <script>
-        const BLOG_URL = 'https://legadoavicola.blogspot.com/'; // Tu blog
+        const BLOG_URL = 'https://legadoavicola.blogspot.com/';
         const iframe = document.getElementById('blogFrame');
         const offlineBadge = document.getElementById('offlineBadge');
         const loading = document.getElementById('loading');
         
-        // Evitar que el blog rompa el iframe
-        function preventIframeBreak() {
-            // Forzar que todos los enlaces se abran dentro del iframe
-            try {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                if (iframeDoc) {
-                    // Modificar todos los enlaces para que no salgan del iframe
-                    const links = iframeDoc.querySelectorAll('a');
-                    links.forEach(link => {
-                        link.setAttribute('target', '_self');
-                        link.setAttribute('rel', 'noopener noreferrer');
-                    });
-                    
-                    // Prevenir que el blog ejecute código que rompa el iframe
-                    iframeDoc.addEventListener('click', function(e) {
-                        const target = e.target.closest('a');
-                        if (target && target.target === '_top') {
-                            e.preventDefault();
-                            target.target = '_self';
-                            target.click();
-                        }
-                    });
-                }
-            } catch(e) {
-                console.log('No se puede acceder al contenido del iframe por seguridad');
-            }
-        }
-        
-        // Función para cargar el blog en el iframe
         function loadBlog() {
             loading.style.display = 'block';
-            
-            // Usar un proxy si es necesario o cargar directamente
             iframe.src = BLOG_URL;
             
-            // Intentar prevenir redirección cada cierto tiempo
-            let interval = setInterval(() => {
-                try {
-                    // Si el iframe intenta redirigir la página padre, lo evitamos
-                    if (iframe.contentWindow && iframe.contentWindow.location.href !== BLOG_URL) {
-                        console.log('Se detectó intento de redirección, corrigiendo...');
-                        // No hacemos nada, solo registramos
-                    }
-                } catch(e) {
-                    clearInterval(interval);
-                }
-            }, 1000);
-            
-            // Ocultar loading después de que cargue
             iframe.onload = function() {
                 loading.style.display = 'none';
-                clearInterval(interval);
-                // Intentar prevenir que los enlaces salgan del iframe
-                setTimeout(preventIframeBreak, 1000);
             };
             
-            // Timeout por si tarda mucho
             setTimeout(() => {
                 loading.style.display = 'none';
-                clearInterval(interval);
             }, 5000);
         }
         
-        // Detectar estado online/offline
         function updateOnlineStatus() {
             if (!navigator.onLine) {
                 offlineBadge.style.display = 'block';
-                console.log('📴 Modo offline - usando contenido cacheado');
+                console.log('📴 Offline - usando cache');
             } else {
                 offlineBadge.style.display = 'none';
-                console.log('🌐 Online - contenido actualizado');
+                console.log('🌐 Online');
             }
         }
         
         // Registrar Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js')
-                .then(registration => {
-                    console.log('✅ Service Worker registrado:', registration.scope);
-                    registration.update();
+                .then(reg => {
+                    console.log('✅ SW registrado:', reg.scope);
+                    
+                    // Verificar si hay actualización
+                    reg.addEventListener('updatefound', () => {
+                        const newWorker = reg.installing;
+                        console.log('🔄 Nueva versión del SW encontrando');
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('✅ Nueva versión lista, recarga para actualizar');
+                            }
+                        });
+                    });
                 })
-                .catch(error => {
-                    console.log('❌ Error al registrar SW:', error);
-                });
+                .catch(err => console.log('❌ Error SW:', err));
+            
+            // Escuchar cambios de conexión
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                console.log('Mensaje del SW:', event.data);
+            });
         }
         
-        // Escuchar cambios de conexión
         window.addEventListener('online', () => {
             updateOnlineStatus();
             loadBlog();
@@ -166,9 +125,13 @@
         
         window.addEventListener('offline', updateOnlineStatus);
         
-        // Inicializar
         updateOnlineStatus();
         loadBlog();
+        
+        // Detectar cuando la app está instalada
+        window.addEventListener('appinstalled', () => {
+            console.log('✅ App instalada exitosamente');
+        });
     </script>
 </body>
 </html>
