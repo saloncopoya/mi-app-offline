@@ -8,51 +8,55 @@ const urlsToCache = [
 ];
 
 // Instalación
-self.addEventListener('install', event => {
+self.addEventListener('install', function(event) {
     console.log('[SW] Instalando...');
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then(cache => {
+            .then(function(cache) {
                 console.log('[SW] Cacheando archivos');
                 return cache.addAll(urlsToCache);
             })
-            .then(() => self.skipWaiting())
+            .then(function() {
+                return self.skipWaiting();
+            })
     );
 });
 
 // Activación
-self.addEventListener('activate', event => {
+self.addEventListener('activate', function(event) {
     console.log('[SW] Activado');
     event.waitUntil(
-        caches.keys().then(cacheNames => {
+        caches.keys().then(function(cacheNames) {
             return Promise.all(
-                cacheNames.map(cache => {
+                cacheNames.map(function(cache) {
                     if (cache !== CACHE_NAME) {
                         console.log('[SW] Eliminando cache viejo:', cache);
                         return caches.delete(cache);
                     }
                 })
             );
-        }).then(() => self.clients.claim())
+        }).then(function() {
+            return self.clients.claim();
+        })
     );
 });
 
 // Interceptar peticiones
-self.addEventListener('fetch', event => {
+self.addEventListener('fetch', function(event) {
     event.respondWith(
         caches.match(event.request)
-            .then(response => {
+            .then(function(response) {
                 if (response) {
                     console.log('[SW] Cache hit:', event.request.url);
                     return response;
                 }
                 console.log('[SW] Fetching:', event.request.url);
                 return fetch(event.request)
-                    .then(networkResponse => {
+                    .then(function(networkResponse) {
                         if (networkResponse && networkResponse.status === 200) {
-                            const responseToCache = networkResponse.clone();
+                            var responseToCache = networkResponse.clone();
                             caches.open(CACHE_NAME)
-                                .then(cache => {
+                                .then(function(cache) {
                                     cache.put(event.request, responseToCache);
                                 });
                         }
