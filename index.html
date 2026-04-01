@@ -8,18 +8,8 @@
     <meta name="mobile-web-app-capable" content="yes"/>
     <meta name="theme-color" content="#8B4513"/>
     <meta name="description" content="Legado Avicola - Red Social Gallística"/>
-    <meta name="image" content="og-image.png"/>
-    <meta property="og:url" content="https://legadoavicola.vercel.app"/>
-    <meta property="og:site_name" content="Legado Avicola"/>
-    <meta property="og:type" content="website"/>
-    <meta property="og:title" content="Legado Avicola"/>
-    <meta property="og:description" content="Conéctate con amigos y el mundo en esta red social gallística"/>
-    <meta property="og:image" name="twitter:image" content="https://legadoavicola.vercel.app/og-image.png"/>
-    <meta name="twitter:card" content="summary_large_image"/>
-    <meta name="twitter:title" content="Legado Avicola"/>
-    <meta name="twitter:description" content="Conéctate con amigos y el mundo en esta red social gallística"/>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon"/>
     <link rel="manifest" href="manifest.json"/>
+    <link rel="shortcut icon" href="icon-192.png" type="image/png"/>
     <style>
         * {
             margin: 0;
@@ -48,7 +38,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            pointer-events: none;
             background: #8B4513;
         }
         .loading-message span {
@@ -84,7 +73,7 @@
         </div>
     </div>
 
-    <!-- PWACOMPAT: La librería que da la experiencia Excalidraw -->
+    <!-- PWACOMPAT: La misma librería que usa Excalidraw para el modal inferior -->
     <script async src="https://unpkg.com/pwacompat@2.0.9/pwacompat.min.js"
         integrity="sha384-hVn9tTvI6Kj4KKlQfGGL/RA5mY7mY0K1NtJ+pnVNb/O2Rkmc2KULfTZV/hFhCFO/"
         crossorigin="anonymous"></script>
@@ -107,7 +96,7 @@
             };
         });
         
-        // Registrar Service Worker (compatible con pwacompat)
+        // Registrar Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -116,7 +105,7 @@
             });
         }
         
-        // Evento para cuando se instala la app
+        // Evento cuando se instala la app
         window.addEventListener('appinstalled', () => {
             console.log('✅ App instalada exitosamente');
         });
