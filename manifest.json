@@ -1,29 +1,63 @@
-{
-  "name": "Mi App PWA",
-  "short_name": "MiApp",
-  "id": "mi_app_pwa_v1",
-  "description": "Mi PWA App instalable y offline",
-  "start_url": "/",
-  "scope": "/",
-  "display": "standalone",
-  "capture_links": "existing_client",
-  "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
-  "categories": ["productivity", "utilities"],
-  "prefer_related_applications": false,
-  "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
-}
+const CACHE_NAME = 'mi-app-v1';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png'
+];
+
+// Instalación
+self.addEventListener('install', event => {
+    console.log('[SW] Instalando...');
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(cache => {
+                console.log('[SW] Cacheando archivos');
+                return cache.addAll(urlsToCache);
+            })
+            .then(() => self.skipWaiting())
+    );
+});
+
+// Activación
+self.addEventListener('activate', event => {
+    console.log('[SW] Activado');
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cache => {
+                    if (cache !== CACHE_NAME) {
+                        console.log('[SW] Eliminando cache viejo:', cache);
+                        return caches.delete(cache);
+                    }
+                })
+            );
+        }).then(() => self.clients.claim())
+    );
+});
+
+// Interceptar peticiones
+self.addEventListener('fetch', event => {
+    event.respondWith(
+        caches.match(event.request)
+            .then(response => {
+                if (response) {
+                    console.log('[SW] Cache hit:', event.request.url);
+                    return response;
+                }
+                console.log('[SW] Fetching:', event.request.url);
+                return fetch(event.request)
+                    .then(networkResponse => {
+                        if (networkResponse && networkResponse.status === 200) {
+                            const responseToCache = networkResponse.clone();
+                            caches.open(CACHE_NAME)
+                                .then(cache => {
+                                    cache.put(event.request, responseToCache);
+                                });
+                        }
+                        return networkResponse;
+                    });
+            })
+    );
+});
