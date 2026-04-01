@@ -7,12 +7,10 @@ var urlsToCache = [
   '/icon-512.png'
 ];
 
-// Instalación
 self.addEventListener('install', function(event) {
-    console.log('[SW] Instalando...');
+    console.log('Instalando Service Worker...');
     event.waitUntil(
         caches.open(CACHE_NAME).then(function(cache) {
-            console.log('[SW] Cacheando archivos');
             return cache.addAll(urlsToCache);
         }).then(function() {
             return self.skipWaiting();
@@ -20,15 +18,13 @@ self.addEventListener('install', function(event) {
     );
 });
 
-// Activación
 self.addEventListener('activate', function(event) {
-    console.log('[SW] Activado');
+    console.log('Activando Service Worker...');
     event.waitUntil(
         caches.keys().then(function(cacheNames) {
             return Promise.all(
                 cacheNames.map(function(cache) {
                     if (cache !== CACHE_NAME) {
-                        console.log('[SW] Eliminando cache viejo:', cache);
                         return caches.delete(cache);
                     }
                 })
@@ -39,15 +35,12 @@ self.addEventListener('activate', function(event) {
     );
 });
 
-// Interceptar peticiones
 self.addEventListener('fetch', function(event) {
     event.respondWith(
         caches.match(event.request).then(function(response) {
             if (response) {
-                console.log('[SW] Cache hit:', event.request.url);
                 return response;
             }
-            console.log('[SW] Fetching:', event.request.url);
             return fetch(event.request).then(function(networkResponse) {
                 if (networkResponse && networkResponse.status === 200) {
                     var responseToCache = networkResponse.clone();
