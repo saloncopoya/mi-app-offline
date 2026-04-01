@@ -56,32 +56,82 @@
     </style>
 </head>
 <body>
-    <!-- IFRAME: Contenedor de tu blog -->
-    <iframe id="blogFrame" src="about:blank"></iframe>
+    <!-- IFRAME: Contenedor de tu blog con sandbox para evitar redirecciones -->
+    <iframe 
+        id="blogFrame" 
+        src="about:blank"
+        sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-modals allow-downloads"
+        referrerpolicy="no-referrer">
+    </iframe>
     <div class="offline-badge" id="offlineBadge">📴 Modo Offline</div>
     <div class="loading" id="loading">Cargando...</div>
 
     <script>
-        const BLOG_URL = 'https://legadoavicola.blogspot.com/'; // 👈 CAMBIA AQUÍ LA URL DE TU BLOG
+        const BLOG_URL = 'https://legadoavicola.blogspot.com/'; // Tu blog
         const iframe = document.getElementById('blogFrame');
         const offlineBadge = document.getElementById('offlineBadge');
         const loading = document.getElementById('loading');
+        
+        // Evitar que el blog rompa el iframe
+        function preventIframeBreak() {
+            // Forzar que todos los enlaces se abran dentro del iframe
+            try {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                if (iframeDoc) {
+                    // Modificar todos los enlaces para que no salgan del iframe
+                    const links = iframeDoc.querySelectorAll('a');
+                    links.forEach(link => {
+                        link.setAttribute('target', '_self');
+                        link.setAttribute('rel', 'noopener noreferrer');
+                    });
+                    
+                    // Prevenir que el blog ejecute código que rompa el iframe
+                    iframeDoc.addEventListener('click', function(e) {
+                        const target = e.target.closest('a');
+                        if (target && target.target === '_top') {
+                            e.preventDefault();
+                            target.target = '_self';
+                            target.click();
+                        }
+                    });
+                }
+            } catch(e) {
+                console.log('No se puede acceder al contenido del iframe por seguridad');
+            }
+        }
         
         // Función para cargar el blog en el iframe
         function loadBlog() {
             loading.style.display = 'block';
             
-            // Intentar cargar el blog desde el cache o red
+            // Usar un proxy si es necesario o cargar directamente
             iframe.src = BLOG_URL;
+            
+            // Intentar prevenir redirección cada cierto tiempo
+            let interval = setInterval(() => {
+                try {
+                    // Si el iframe intenta redirigir la página padre, lo evitamos
+                    if (iframe.contentWindow && iframe.contentWindow.location.href !== BLOG_URL) {
+                        console.log('Se detectó intento de redirección, corrigiendo...');
+                        // No hacemos nada, solo registramos
+                    }
+                } catch(e) {
+                    clearInterval(interval);
+                }
+            }, 1000);
             
             // Ocultar loading después de que cargue
             iframe.onload = function() {
                 loading.style.display = 'none';
+                clearInterval(interval);
+                // Intentar prevenir que los enlaces salgan del iframe
+                setTimeout(preventIframeBreak, 1000);
             };
             
             // Timeout por si tarda mucho
             setTimeout(() => {
                 loading.style.display = 'none';
+                clearInterval(interval);
             }, 5000);
         }
         
@@ -101,14 +151,7 @@
             navigator.serviceWorker.register('sw.js')
                 .then(registration => {
                     console.log('✅ Service Worker registrado:', registration.scope);
-                    
-                    // Forzar actualización
                     registration.update();
-                    
-                    // Escuchar mensajes del SW
-                    navigator.serviceWorker.addEventListener('message', event => {
-                        console.log('Mensaje del SW:', event.data);
-                    });
                 })
                 .catch(error => {
                     console.log('❌ Error al registrar SW:', error);
@@ -118,7 +161,7 @@
         // Escuchar cambios de conexión
         window.addEventListener('online', () => {
             updateOnlineStatus();
-            loadBlog(); // Recargar cuando vuelve internet
+            loadBlog();
         });
         
         window.addEventListener('offline', updateOnlineStatus);
