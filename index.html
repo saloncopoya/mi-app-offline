@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Mi Blog Offline</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <!-- Aquí va el contenido de tu blog -->
+    <div id="contenido">
+        <h1>Cargando tu blog...</h1>
+    </div>
+
+    <script>
+        // URL de TU blog de Blogger (CAMBIA ESTA URL)
+        const URL_BLOG = 'https://legadoavicola.blogspot.com/'; 
+        async function cargarBlog() {
+            try {
+                const respuesta = await fetch(URL_BLOG);
+                const html = await respuesta.text();
+                document.getElementById('contenido').innerHTML = html;
+            } catch(error) {
+                document.getElementById('contenido').innerHTML = `
+                    <h1>Modo Offline</h1>
+                    <p>Estás viendo la versión guardada de tu blog</p>
+                    <div id="offline-content"></div>
+                `;
+            }
+        }
+        
+        cargarBlog();
+    </script>
+</body>
+</html>
