@@ -1,16 +1,16 @@
 {
-  "name": "Legado Avicola - Social",
-  "short_name": "Legado Avicola",
-  "id": "legado_avicola_v1",
-  "description": "Conéctate con amigos y el mundo en esta red social",
+  "name": "Mi App PWA",
+  "short_name": "MiApp",
+  "id": "mi_app_pwa_v1",
+  "description": "Mi PWA App instalable y offline",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "capture_links": "existing_client",
-  "orientation": "portrait-primary",
-  "background_color": "#8B4513",
-  "theme_color": "#8B4513",
-  "categories": ["social", "entertainment"],
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "categories": ["productivity", "utilities"],
   "prefer_related_applications": false,
   "icons": [
     {
@@ -25,79 +25,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "shortcuts": [
-    {
-      "name": "SUBASTA",
-      "short_name": "SUBASTA",
-      "description": "Ver Torneo en linea",
-      "url": "/?section=ventas",
-      "icons": [
-        {
-          "src": "icon-192.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "INICIO",
-      "short_name": "INICIO",
-      "description": "Ver mi perfil",
-      "url": "/?section=public",
-      "icons": [
-        {
-          "src": "icon-192.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "POST",
-      "short_name": "POST",
-      "description": "Ver mis gallos",
-      "url": "/?section=share",
-      "icons": [
-        {
-          "src": "icon-192.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "TORNEOS",
-      "short_name": "TORNEOS",
-      "description": "Ver mis gallos",
-      "url": "/?section=rooster",
-      "icons": [
-        {
-          "src": "icon-192.png",
-          "sizes": "96x96"
-        }
-      ]
-    }
-  ],
-  "screenshots": [
-    {
-          "src": "icon-192.png",
-      "sizes": "462x945",
-      "type": "image/jpeg",
-      "form_factor": "wide"
-    }
-  ],
-  "share_target": {
-    "action": "/?section=rooster",
-    "method": "POST",
-    "enctype": "multipart/form-data",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url",
-      "files": [
-        {
-          "name": "file",
-          "accept": ["image/*", "video/*", "application/pdf", "text/plain", "*/*"]
-        }
-      ]
-    }
-  }
+  ]
 }
