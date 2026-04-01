@@ -34,7 +34,7 @@
       "url": "/?section=ventas",
       "icons": [
         {
-          "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjVTUDeD4YQxMEWsXkhZ2mnO82aqrR_lwolu4iWD2xUyPhcIzkxvavkKbJKKpPx8j0j6lqxabXj9jamHQKPZaonxlO9Hiytdedp19-_FbnC9fMVj9xMuN6zdus-S80uuMY8SjP62lHBfQWrBBdWNVoqiXh-hzM7cy9NN0esgVsr4T9aTABkotd33RApm_ap/s1600/home.png",
+          "src": "icon-192.png",
           "sizes": "96x96"
         }
       ]
@@ -46,7 +46,7 @@
       "url": "/?section=public",
       "icons": [
         {
-          "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjVNrdIQGfVQIHnHn-l7k9MqCiz70SS2dw07ieHP3LzI7phF5tt5C4sByI78iFQQjYq8Dir3cy7NAExruCcpg5z_Xs-iKboUb7QTBpEVS-CPvx9DHqN7kJFVl-4exJEU7YnMwiPRqnvzq3we2YX_9f9invA40qqQzpw7vnoN17FrHuyQ8rxpEX5kocEfAal/s1600/descargar.png",
+          "src": "icon-192.png",
           "sizes": "96x96"
         }
       ]
@@ -58,7 +58,7 @@
       "url": "/?section=share",
       "icons": [
         {
-          "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjVNrdIQGfVQIHnHn-l7k9MqCiz70SS2dw07ieHP3LzI7phF5tt5C4sByI78iFQQjYq8Dir3cy7NAExruCcpg5z_Xs-iKboUb7QTBpEVS-CPvx9DHqN7kJFVl-4exJEU7YnMwiPRqnvzq3we2YX_9f9invA40qqQzpw7vnoN17FrHuyQ8rxpEX5kocEfAal/s1600/descargar.png",
+          "src": "icon-192.png",
           "sizes": "96x96"
         }
       ]
@@ -70,7 +70,7 @@
       "url": "/?section=rooster",
       "icons": [
         {
-          "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjVTUDeD4YQxMEWsXkhZ2mnO82aqrR_lwolu4iWD2xUyPhcIzkxvavkKbJKKpPx8j0j6lqxabXj9jamHQKPZaonxlO9Hiytdedp19-_FbnC9fMVj9xMuN6zdus-S80uuMY8SjP62lHBfQWrBBdWNVoqiXh-hzM7cy9NN0esgVsr4T9aTABkotd33RApm_ap/s1600/home.png",
+          "src": "icon-192.png",
           "sizes": "96x96"
         }
       ]
@@ -78,7 +78,7 @@
   ],
   "screenshots": [
     {
-      "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhlUahiOL_GA-zwariPkNYbtWbIhGYnJfTu9M0RAxeb0J-LBVOqfR4-HKai2LtdTavQlyPYsbAAUZillcM3KrSET9hqjMqrS6mB1KWGshq386SJdn-Oh7H8oBkWjsNWSsoPcTFNrOYT4RnPY5lLjdHoUrjPeBVpi4spk_FMsRm9T4KBRinrRM_E1MeyACyN/s1600/abrir.jpg",
+          "src": "icon-192.png",
       "sizes": "462x945",
       "type": "image/jpeg",
       "form_factor": "wide"
