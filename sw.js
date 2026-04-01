@@ -1,6 +1,7 @@
-const CACHE_NAME = 'mi-blog-v1';
+const CACHE_NAME = 'blog-offline-v1';
+const BLOG_URL = 'https://legadoavicola.blogspot.com/';
 
-// Instalación: cachear archivos básicos
+// Instalación
 self.addEventListener('install', event => {
     console.log('[SW] Instalando...');
     event.waitUntil(
@@ -17,7 +18,7 @@ self.addEventListener('install', event => {
     );
 });
 
-// Activación: limpiar caches viejos
+// Activación
 self.addEventListener('activate', event => {
     console.log('[SW] Activado');
     event.waitUntil(
@@ -30,39 +31,46 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Interceptar TODAS las peticiones
+// Interceptar peticiones
 self.addEventListener('fetch', event => {
     const url = event.request.url;
     
-    // Estrategia: Cache First (primero cache, luego red)
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                if (response) {
-                    // Si está en cache, lo devuelve
-                    console.log('[SW] Cache hit:', url);
-                    return response;
-                }
-                
-                // Si no está en cache, va a la red
-                console.log('[SW] Fetching:', url);
-                return fetch(event.request)
-                    .then(networkResponse => {
-                        // Guardar en cache para próxima vez
-                        if (networkResponse && networkResponse.status === 200) {
+    // Si es la petición al blog, la cacheamos
+    if (url.includes('blogspot.com') || url === BLOG_URL) {
+        event.respondWith(
+            caches.match(event.request)
+                .then(response => {
+                    if (response) {
+                        console.log('[SW] Cache hit:', url);
+                        return response;
+                    }
+                    
+                    console.log('[SW] Fetching blog:', url);
+                    return fetch(event.request)
+                        .then(networkResponse => {
                             const responseToCache = networkResponse.clone();
                             caches.open(CACHE_NAME)
                                 .then(cache => {
                                     cache.put(event.request, responseToCache);
                                 });
-                        }
-                        return networkResponse;
-                    })
-                    .catch(error => {
-                        console.log('[SW] Error fetch:', error);
-                        // Si falla red y no hay cache, devolver página offline
+                            return networkResponse;
+                        })
+                        .catch(error => {
+                            console.log('[SW] Error, devolviendo index');
+                            return caches.match('/index.html');
+                        });
+                })
+        );
+    } 
+    // Para el resto de recursos
+    else {
+        event.respondWith(
+            caches.match(event.request)
+                .then(response => {
+                    return response || fetch(event.request).catch(() => {
                         return caches.match('/index.html');
                     });
-            })
-    );
+                })
+        );
+    }
 });
